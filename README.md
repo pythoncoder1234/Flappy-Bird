@@ -7,4 +7,4 @@ Make sure to dodge the green poles!
 Since the game is infinite, let's see how far you can go!
 
 **Run**:
-Once downloaded, run the main.py file.
+Once downloaded, run the `main.py` file.
