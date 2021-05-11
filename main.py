@@ -1,4 +1,5 @@
 import pygame,Controls
+import AI
 
 from Restart_Menu import RestartMenu
 from Player import PlayerBird
@@ -35,7 +36,7 @@ screen.fill(blue)
 pygame.display.update()
 
 player = PlayerBird(0,100)
-beams = [Beam(1000,200),Beam(1300,300),Beam(2000,400)]
+beams = [Beam(1000,200),Beam(1500,300),Beam(2000,400)]
 
 ground = Ground()
 
@@ -43,7 +44,10 @@ def update():
     global score,beams,running,highscore,highscoretxt
     screen.fill(blue)
 
-    player.update()
+    player.update(auto)
+    if auto:
+        AI.update(player, beams)
+
     for beam in beams:
         beam.update()
         if beam.x < player.x-100:
@@ -57,14 +61,14 @@ def update():
     if (beams[0].x-180 < player.x < beams[0].x and not beams[0].height + 30 < player.y < beams[0].height + 200) or player.y >= 650:
         Controls.paused = True
 
-        if score > highscore:
+        if score > highscore and not auto:
             highscore = score
             highscoretxt = open("Sources/highscore.txt",'w')
             highscoretxt.write(str(highscore))
             highscoretxt.close()
 
         menu = RestartMenu()
-        menu.update()
+        menu.update(auto)
 
         while Controls.paused and running:
             for event in pygame.event.get():
@@ -84,7 +88,7 @@ def update():
 
                         del menu
 
-            pygame.time.delay(20)
+            pygame.time.delay(50)
 
     elif beams[0].x - 60 < player.x < beams[0].x - 50:
         score += 1
@@ -101,19 +105,21 @@ while not menu.playButtonPressed and running:
 
     pygame.time.delay(100)
 
+auto = menu.auto
 del menu
 
+clock = pygame.time.Clock()
+
 while running:
-    try:
-        update()
-        pygame.time.delay(20)
+    update()
+    pygame.time.delay(20)
 
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                running = False
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
 
-    except pygame.error:
-        quit()
+    clock.tick(50)
 
 pygame.display.quit()
 pygame.quit()
+quit()
